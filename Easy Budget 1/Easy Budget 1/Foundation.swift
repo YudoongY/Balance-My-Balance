@@ -7,9 +7,22 @@
 
 import Foundation
 
+//struct Income: Identifiable {
+//    let id = UUID() // Unique identifier for each transaction
+//    var description: String
+//    var amount: Double
+//}
+//
+//struct Expense: Identifiable {
+//    let id = UUID() // Unique identifier for each transaction
+//    var description: String
+//    var amount: Double
+//}
+
 struct Transaction: Identifiable {
-    let id = UUID() // Unique identifier for each transaction
+    let id = UUID()
     var description: String
     var amount: Double
     var isIncome: Bool
+    var timestamp: Date
 }

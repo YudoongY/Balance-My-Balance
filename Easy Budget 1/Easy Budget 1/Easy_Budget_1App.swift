@@ -11,7 +11,8 @@ import SwiftUI
 struct Easy_Budget_1App: App {
     var body: some Scene {
         WindowGroup {
-            AccountView()
+//            ChatBubbleView(transaction: <#Transaction#>)
+            ContentView()
         }
     }
 }
