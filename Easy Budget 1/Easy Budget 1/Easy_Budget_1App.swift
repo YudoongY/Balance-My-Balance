@@ -12,7 +12,7 @@ struct Easy_Budget_1App: App {
     var body: some Scene {
         WindowGroup {
 //            ChatBubbleView(transaction: <#Transaction#>)
-            ContentView()
+            MainPageView()
         }
     }
 }
