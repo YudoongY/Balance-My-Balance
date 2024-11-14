@@ -47,6 +47,12 @@ struct MainPageView: View {
                 Spacer()
                 
             }
+            .onAppear {
+                accountManager.loadData()
+            }
+            .onDisappear {
+                accountManager.saveData()
+            }
         }
         .environmentObject(accountManager)
     }
@@ -54,11 +60,15 @@ struct MainPageView: View {
 
 struct Page2View: View {
     @ObservedObject var accountManager: AccountManager
-    var account: Account
+    var account : Account
     
     var body: some View {
         VStack{
-            ContentView(account: account)
+            if let firstAccount = accountManager.accounts.first {
+                ContentView(account: firstAccount)
+            } else {
+                Text("No account available")
+            }
         }
         .navigationTitle(account.name)
         .navigationBarTitleDisplayMode(.inline)
