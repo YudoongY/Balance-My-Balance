@@ -1,9 +1,9 @@
-// Accounts choosing page
+// Accounts selection page
 
 import SwiftUI
 
 struct MainPageView: View {
-    @StateObject private var accountManager = AccountManager()
+    var accounts: [Account]
                                    
     var body: some View {
         NavigationView {
@@ -18,8 +18,8 @@ struct MainPageView: View {
                     .padding(.horizontal)
                 
                 VStack {
-                    ForEach(accountManager.accounts) { account in
-                        NavigationLink(destination: Page2View(accountManager: accountManager, account: account)) {
+                    ForEach(accounts) { account in
+                        NavigationLink(destination: Page2View(account: account)) {
                             HStack {
                                 Circle()
                                     .frame(width: 45, height: 45)
@@ -34,8 +34,7 @@ struct MainPageView: View {
                     // “+”按钮，用于添加新账户
                     Button(action: {
                         // 添加新账户
-                        let newAccount = Account(name: "Account\(accountManager.accounts.count + 1)")
-                        accountManager.accounts.append(newAccount)
+                        let newAccount = Account(name: "Account\(accounts.count + 1)")
                     }) {
                         HStack {
                             Image(systemName: "plus.circle")
@@ -49,24 +48,16 @@ struct MainPageView: View {
                 Spacer()
                 
             }
-            .onAppear {
-                accountManager.loadData()
-            }
-            .onDisappear {
-                accountManager.saveData()
-            }
         }
-        .environmentObject(accountManager)
     }
 }
 
 struct Page2View: View {
-    @ObservedObject var accountManager: AccountManager
     var account : Account
     
     var body: some View {
         VStack{
-            if let firstAccount = accountManager.accounts.first {
+            if let firstAccount = accounts.first {
                 ContentView(account: firstAccount)
             } else {
                 Text("No account available")

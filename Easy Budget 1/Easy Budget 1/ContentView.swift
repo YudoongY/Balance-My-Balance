@@ -4,18 +4,19 @@ import SwiftUI
 import Combine
 
 struct ContentView: View {
-    @State private var transactions: [Transaction] = [
-        Transaction(description: "Grocery Shopping", amount: 30.0, isIncome: false, timestamp: Date()),
-        Transaction(description: "Salary", amount: 1000.0, isIncome: true, timestamp: Date())
-    ]
-//    @State private var transactions = accountManager.accounts.first?.transactions
+    @State private var transactions: [Transaction]
     @State private var showingAddTransactionSheet = false
-    @State private var accountName: String = "Account1"
+    @State private var accountName: String
     @State private var isAddingIncome = true // 用于判断添加的是收入还是支出
-    @State private var description: String = ""
+    @State private var description: String
     
     var account: Account
-//    var accountManager : AccountManager
+
+    init(account: Account) {
+        self.account = account
+        self.transactions = account.transactions
+        self.description = account.description
+    }
         
     var amount: Double {
         transactions.filter { $0.isIncome }.map { $0.amount }.reduce(0, +)

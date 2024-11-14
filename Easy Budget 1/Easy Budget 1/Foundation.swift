@@ -30,13 +30,15 @@ struct TransactionDateGroup: Identifiable {
     let transactions: [Transaction]
 }
 
-class Account: Identifiable, ObservableObject, Codable{
+class Account: Identifiable, Codable{
     let id = UUID()
     var name: String
+    var description: String
     @Published var transactions: [Transaction] = []
     
     init(name: String) {
         self.name = name
+        self.description = description
     }
     
     // Coding keys to encode/decode `@Published` property
@@ -57,26 +59,26 @@ class Account: Identifiable, ObservableObject, Codable{
     }
 }
 
-// 创建共享数据模型
-class AccountManager: ObservableObject {
-    @Published var accounts: [Account] = [
-        Account(name: "Account1")
-    ]
+// // 创建共享数据模型
+// class AccountManager: ObservableObject {
+//     @Published var accounts: [Account] = [
+//         Account(name: "Account1")
+//     ]
     
-    private let userDefaultsKey = "SavedAccounts"
+//     private let userDefaultsKey = "SavedAccounts"
 
-    // 保存数据到 UserDefaults
-    func saveData() {
-        if let encoded = try? JSONEncoder().encode(accounts) {
-            UserDefaults.standard.set(encoded, forKey: userDefaultsKey)
-        }
-    }
+//     // 保存数据到 UserDefaults
+//     func saveData() {
+//         if let encoded = try? JSONEncoder().encode(accounts) {
+//             UserDefaults.standard.set(encoded, forKey: userDefaultsKey)
+//         }
+//     }
 
-    // 从 UserDefaults 加载数据
-    func loadData() {
-        if let savedData = UserDefaults.standard.data(forKey: userDefaultsKey),
-           let decoded = try? JSONDecoder().decode([Account].self, from: savedData) {
-            accounts = decoded
-        }
-    }
-}
+//     // 从 UserDefaults 加载数据
+//     func loadData() {
+//         if let savedData = UserDefaults.standard.data(forKey: userDefaultsKey),
+//            let decoded = try? JSONDecoder().decode([Account].self, from: savedData) {
+//             accounts = decoded
+//         }
+//     }
+// }
