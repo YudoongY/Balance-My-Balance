@@ -1,3 +1,5 @@
+// Accounts choosing page
+
 import SwiftUI
 
 struct MainPageView: View {

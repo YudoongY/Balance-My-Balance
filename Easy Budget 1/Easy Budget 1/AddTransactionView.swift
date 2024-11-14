@@ -1,9 +1,4 @@
-//
-//  AddTransactionView.swift
-//  Easy Budget 1
-//
-//  Created by 高铭阳 on 11/11/24.
-//
+// Pop up sheet window to fill out a description about current transaction and the amount of income/expense
 
 import SwiftUI
 

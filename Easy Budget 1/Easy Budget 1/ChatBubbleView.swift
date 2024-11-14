@@ -1,7 +1,7 @@
+// Main page to demonstrate transaction entries with chat bubble view
+
 import SwiftUI
 import Combine
-
-
 
 struct ChatBubbleView: View {
     var transaction: Transaction
@@ -17,11 +17,11 @@ struct ChatBubbleView: View {
         VStack{
             HStack {
                 ZStack {
-                    // 背景气泡
+                    // background bubble
                     RoundedRectangle(cornerRadius: 12)
                         .fill(transaction.isIncome ? Color.green.opacity(0.3) : Color.red.opacity(0.3))
                     
-                    // 气泡内的内容
+                    // content in the bubble
                     HStack {
                         Text("  ")
                         Text(transaction.description)
@@ -46,9 +46,3 @@ struct ChatBubbleView: View {
         }
     }
 }
-
-//struct ContentView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ContentView(account: account)
-//    }
-//}

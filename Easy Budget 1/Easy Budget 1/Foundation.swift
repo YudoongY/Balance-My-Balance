@@ -1,9 +1,4 @@
-//
-//  Foundation.swift
-//  Easy Budget 1
-//
-//  Created by 高铭阳 on 10/20/24.
-//
+// All the declarations of structures and classes
 
 import Foundation
 

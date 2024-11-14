@@ -1,9 +1,4 @@
-//
-//  CHatBubbleView.swift
-//  Easy Budget 1
-//
-//  Created by 高铭阳 on 11/11/24.
-//
+//Main structure to organize the list of transaction entries
 
 import SwiftUI
 import Combine
