@@ -16,6 +16,7 @@ struct ContentView: View {
         self.account = account
         self.transactions = account.transactions
         self.description = account.description
+        self.accountName = account.name
     }
         
     var amount: Double {

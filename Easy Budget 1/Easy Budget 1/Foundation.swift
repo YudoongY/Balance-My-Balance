@@ -36,19 +36,20 @@ class Account: Identifiable, Codable{
     var description: String
     @Published var transactions: [Transaction] = []
     
-    init(name: String) {
+    init(name: String, description: String) {
         self.name = name
         self.description = description
     }
     
     // Coding keys to encode/decode `@Published` property
     enum CodingKeys: String, CodingKey {
-        case id, name, transactions
+        case id, name, description, transactions
     }
 
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         name = try container.decode(String.self, forKey: .name)
+        description = try container.decode(String.self, forKey: .description)
         transactions = try container.decode([Transaction].self, forKey: .transactions)
     }
 

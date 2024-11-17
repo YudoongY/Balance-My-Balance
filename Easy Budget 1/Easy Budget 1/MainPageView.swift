@@ -19,7 +19,7 @@ struct MainPageView: View {
                 
                 VStack {
                     ForEach(accounts) { account in
-                        NavigationLink(destination: Page2View(account: account)) {
+                        NavigationLink(destination: Page2View(account: account, accounts: [account])) {
                             HStack {
                                 Circle()
                                     .frame(width: 45, height: 45)
@@ -34,7 +34,7 @@ struct MainPageView: View {
                     // “+”按钮，用于添加新账户
                     Button(action: {
                         // 添加新账户
-                        let newAccount = Account(name: "Account\(accounts.count + 1)")
+                        let newAccount = Account(name: "Account\(accounts.count + 1)", description: "")
                     }) {
                         HStack {
                             Image(systemName: "plus.circle")
@@ -53,7 +53,8 @@ struct MainPageView: View {
 }
 
 struct Page2View: View {
-    var account : Account
+    var account = Account(name: "Account1", description: "")
+    var accounts : [Account]
     
     var body: some View {
         VStack{
@@ -70,6 +71,6 @@ struct Page2View: View {
 
 struct MainPageView_Previews: PreviewProvider {
     static var previews: some View {
-        MainPageView()
+        MainPageView(accounts: [Account(name: "Account1", description: "")])
     }
 }
