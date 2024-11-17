@@ -19,10 +19,10 @@ struct ContentView: View {
                 VStack(alignment: .leading) {
                 // Account info and amount
                     HStack {
-                        // Placeholder for account image (circle)
+                        // Account image (circle)
                         Circle()
                             .frame(width: 45, height: 45)
-                            .overlay(Text(String(account.name.prefix(1))).font(.title))
+                            .overlay(Text(account.icon).font(.title))
                         
                         Text(account.name)
                             .font(.bold(.title)())
@@ -30,7 +30,7 @@ struct ContentView: View {
                         Spacer()
                         
                         VStack {
-                            // Placeholder for account amount
+                            // Account amount
                             Text(String(format: "$ %.2f", amount))
                                 .font(.bold(.title)())
                         }

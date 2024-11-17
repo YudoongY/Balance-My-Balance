@@ -1,4 +1,5 @@
 // Main page to demonstrate transaction entries with chat bubble view
+// Manage sole transaction entry
 
 import SwiftUI
 import Combine

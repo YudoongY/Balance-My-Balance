@@ -4,6 +4,8 @@ import SwiftUI
 
 struct MainPageView: View {
     @State var accounts: [Account] = []
+    @State private var selectedIcon = "creditcard"
+    @State private var showingIconPicker = false
                                    
     var body: some View {
         NavigationView {
@@ -23,18 +25,20 @@ struct MainPageView: View {
                             HStack {
                                 Circle()
                                     .frame(width: 45, height: 45)
-                                    .overlay(Text(String(account.name.prefix(1))).font(.title))
+                                    .overlay(Text(account.icon).font(.title))
                                 // Account avatar
                                 Text(account.name)
                                 Spacer()
+                                
                             }
                             .padding(.horizontal)
                         }
+                        Divider()
                     }
                     
-                    // “+”按钮，用于添加新账户
+                    // "+" button, for adding new accounts
                     Button(action: {
-                        // 添加新账户
+                        // Add a new account
                         @State var newAccount = Account(name: "Account\(accounts.count + 1)", description: "")
                         accounts.append(newAccount)
                     }) {
@@ -68,7 +72,7 @@ struct TransactionsView: View {
 
 struct MainPageView_Previews: PreviewProvider {
     static var previews: some View {
-        @State var accounts: [Account] = [Account(name: "Account1", description: "")]
+        @State var accounts: [Account] = [Account(name: "Your Account", description: "")]
         MainPageView(accounts: accounts)
     }
 }

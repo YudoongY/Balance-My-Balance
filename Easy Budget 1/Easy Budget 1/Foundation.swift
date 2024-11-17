@@ -32,6 +32,7 @@ struct TransactionDateGroup: Identifiable {
 
 class Account: Identifiable, ObservableObject{
     let id = UUID()
+    @Published var icon: String
     @Published var name: String
     @Published var description: String
     @Published var transactions: [Transaction] = []
@@ -40,5 +41,6 @@ class Account: Identifiable, ObservableObject{
         self.name = name
         self.description = description
         self.transactions = []
+        self.icon = "💳"
     }
 }
