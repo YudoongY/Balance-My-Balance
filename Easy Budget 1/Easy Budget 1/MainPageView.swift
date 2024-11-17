@@ -3,7 +3,7 @@
 import SwiftUI
 
 struct MainPageView: View {
-    var accounts: [Account]
+    @State var accounts: [Account]
                                    
     var body: some View {
         NavigationView {
@@ -34,7 +34,8 @@ struct MainPageView: View {
                     // “+”按钮，用于添加新账户
                     Button(action: {
                         // 添加新账户
-                        let newAccount = Account(name: "Account\(accounts.count + 1)", description: "")
+                        var newAccount = Account(name: "Account\(accounts.count + 1)", description: "")
+                        accounts.append(newAccount)
                     }) {
                         HStack {
                             Image(systemName: "plus.circle")
