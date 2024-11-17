@@ -49,6 +49,7 @@ struct ContentView: View {
                     .padding()
                     
                     VStack {
+                        Text(description)
                         TextField("Description", text: $description)
                             .onReceive(Just(description)) { newValue in
                                 if newValue.count > 45 {

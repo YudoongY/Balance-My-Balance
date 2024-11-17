@@ -1,5 +1,5 @@
 // All the declarations of structures and classes
-
+import SwiftUI
 import Foundation
 
 struct Transaction: Identifiable, Codable {
@@ -23,21 +23,22 @@ struct Transaction: Identifiable, Codable {
     }
 }
 
-// 用于按日期分组交易的结构体
+// Struct for grouping transactions by date
 struct TransactionDateGroup: Identifiable {
     let id = UUID()
     let date: Date
     let transactions: [Transaction]
 }
 
-class Account: Identifiable{
+class Account: Identifiable, ObservableObject{
     let id = UUID()
-    var name: String
-    var description: String
+    @Published var name: String
+    @Published var description: String
     @Published var transactions: [Transaction] = []
     
     init(name: String, description: String) {
         self.name = name
         self.description = description
+        self.transactions = []
     }
 }
