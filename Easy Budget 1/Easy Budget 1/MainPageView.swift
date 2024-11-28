@@ -73,10 +73,8 @@ struct MainPageView: View {
                         .sheet(item: $activeSheet) { sheet in
                             if let index = selectedAccountIndex {
                                 switch sheet {
-                                case .editName:
-                                    Helloworld()
-                                case .editIcon:
-                                    EditAccountIconView(account: $accounts[index])
+                                    case .editName: EditAccountNameView(account: $accounts[index])
+                                    case .editIcon: EditAccountIconView(account: $accounts[index])
                                 }
                             }
                         }

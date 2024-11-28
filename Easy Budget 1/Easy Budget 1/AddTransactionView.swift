@@ -6,8 +6,7 @@ struct AddIncomeView: View {
     @Environment(\.dismiss) var dismiss // 用于关闭表单视图
     @State private var description = ""
     @State private var amount = ""
-    
-//    let isIncome: Bool
+
     var onAdd: (Transaction) -> Void
     
     var body: some View {
