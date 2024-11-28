@@ -43,7 +43,6 @@ struct AddIncomeView: View {
                 }
             }
         }
-//        .frame(height: 700)
     }
 }
 
@@ -87,6 +86,5 @@ struct AddExpenseView: View {
                 }
             }
         }
-//        .frame(height: 700)
     }
 }

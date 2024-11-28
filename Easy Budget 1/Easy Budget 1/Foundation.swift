@@ -44,3 +44,12 @@ class Account: Identifiable, ObservableObject{
         self.icon = "💳"
     }
 }
+
+enum ActiveSheet: Identifiable {
+    case editName
+    case editIcon
+    
+    var id: Int {
+        hashValue
+    }
+}
