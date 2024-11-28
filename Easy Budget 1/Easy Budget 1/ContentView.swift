@@ -5,9 +5,9 @@ import Combine
 
 struct ContentView: View {
     @ObservedObject var account: Account
-    @State private var showingAddTransactionSheet = false
-    @State private var isAddingIncome = true // 用于判断添加的是收入还是支出
-        
+    @State private var showingIncomeSheet = false
+    @State private var showingExpenseSheet = false
+
     var amount: Double {
         account.transactions.filter { $0.isIncome }.map { $0.amount }.reduce(0, +)
         - account.transactions.filter { !$0.isIncome }.map { $0.amount }.reduce(0, +)
@@ -79,8 +79,7 @@ struct ContentView: View {
                 // 底部按钮，用于添加收入和支出
                 HStack {
                     Button(action: {
-                        isAddingIncome = true
-                        showingAddTransactionSheet = true
+                        showingIncomeSheet = true
                     }) {
                         Text("Add Income")
                             .font(.headline)
@@ -94,8 +93,7 @@ struct ContentView: View {
                     Spacer()
                     
                     Button(action: {
-                        isAddingIncome = false
-                        showingAddTransactionSheet = true
+                        showingExpenseSheet = true
                     }) {
                         Text("Add Expense")
                             .font(.headline)
@@ -110,9 +108,17 @@ struct ContentView: View {
                 .padding(.bottom, 10)
                 
             }
-            .sheet(isPresented: $showingAddTransactionSheet) {
+            .sheet(isPresented: $showingIncomeSheet) {
                 VStack{
-                    AddTransactionView(isIncome: isAddingIncome) { newTransaction in
+                    AddIncomeView { newTransaction in
+                        account.transactions.append(newTransaction)
+                    }
+                    .presentationDetents([.height(250)]) // Adjust the size of the window
+                }// Pop up the sheet
+            }
+            .sheet(isPresented: $showingExpenseSheet) {
+                VStack{
+                    AddExpenseView { newTransaction in
                         account.transactions.append(newTransaction)
                     }
                     .presentationDetents([.height(250)]) // Adjust the size of the window
