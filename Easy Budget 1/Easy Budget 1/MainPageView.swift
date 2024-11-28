@@ -10,7 +10,7 @@ struct MainPageView: View {
     var body: some View {
         NavigationView {
             VStack(alignment: .leading) {
-                Text("Hi, YY!")
+                Text("Hi! How are you?") //姑且用这个greeting
                     .font(.title)
                     .padding(.bottom, 5)
                     .padding(.horizontal)
