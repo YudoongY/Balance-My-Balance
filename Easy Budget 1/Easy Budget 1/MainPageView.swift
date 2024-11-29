@@ -4,9 +4,10 @@ import SwiftUI
 
 struct MainPageView: View {
     @State var accounts: [Account] = []
-    @State private var showingDeleteAlert = false
     @State private var selectedAccountIndex: Int?
-    @State private var activeSheet: ActiveSheet?
+    @State private var showingDeleteAlert = false
+    @State private var showingEditNameSheet = false
+    @State private var showingEditIconSheet = false
                                    
     var body: some View {
         NavigationView {
@@ -49,11 +50,11 @@ struct MainPageView: View {
                             Menu {
                                 Button("Edit Account Name") {
                                     selectedAccountIndex = index
-                                    activeSheet = .editName
+                                    showingEditNameSheet = true
                                 }
                                 Button("Edit Account Icon") {
                                     selectedAccountIndex = index
-                                    activeSheet = .editIcon
+                                    showingEditIconSheet = true
                                 }
                                 Button(role: .destructive) {
                                     selectedAccountIndex = index
@@ -69,14 +70,6 @@ struct MainPageView: View {
                                     .frame(width: 35, height: 43)
                             }
                             .padding(.horizontal)
-                        }
-                        .sheet(item: $activeSheet) { sheet in
-                            if let index = selectedAccountIndex {
-                                switch sheet {
-                                    case .editName: EditAccountNameView(account: $accounts[index])
-                                    case .editIcon: EditAccountIconView(account: $accounts[index])
-                                }
-                            }
                         }
                         
                         Divider()
@@ -103,10 +96,19 @@ struct MainPageView: View {
                 
                 Spacer()
             }
+            .sheet(isPresented: $showingEditNameSheet) {
+                if let index = selectedAccountIndex {
+                    EditAccountNameView(account: $accounts[index])
+                }
+            }
+            .sheet(isPresented: $showingEditIconSheet) {
+                if let index = selectedAccountIndex {
+                    EditAccountIconView(account: $accounts[index])
+                }
+            }
             .alert("Delete Account", isPresented: $showingDeleteAlert) {
                 Button("Delete", role: .destructive) {
                     if let selectedAccountIndex = selectedAccountIndex{
-//                       let index = accounts.firstIndex(where: { $0.id == selectedAccount.id }) {
                         accounts.remove(at: selectedAccountIndex)
                     }
                 }
