@@ -4,7 +4,7 @@ import SwiftUI
 
 struct MainPageView: View {
     @State var accounts: [Account] = []
-    @State private var selectedAccountIndex: Int?
+    @State private var selectedAccountIndex: Int? = 0
     @State private var showingDeleteAlert = false
     @State private var showingEditNameSheet = false
     @State private var showingEditIconSheet = false
@@ -30,6 +30,8 @@ struct MainPageView: View {
                 VStack {
                     ForEach(accounts.indices, id: \.self) { index in
                         let account = accounts[index]
+//                        let curIndex = index
+                        
                         HStack {
                             NavigationLink(destination: TransactionsView(account: account)) {
                                 HStack {
@@ -98,8 +100,12 @@ struct MainPageView: View {
             }
             .sheet(isPresented: $showingEditNameSheet) {
                 if let index = selectedAccountIndex {
-                    EditAccountNameView(account: $accounts[index])
+//                    EditAccountNameView(account: $accounts[index])
+//                    EditAccountNameView(account: Account(name: "", description: ""))
+//                    EditAccountNameView()
+                    TestView()
                 }
+//                TestView()
             }
             .sheet(isPresented: $showingEditIconSheet) {
                 if let index = selectedAccountIndex {
