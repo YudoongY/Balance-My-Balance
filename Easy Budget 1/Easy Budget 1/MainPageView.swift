@@ -4,7 +4,7 @@ import SwiftUI
 
 struct MainPageView: View {
     @State var accounts: [Account] = []
-    @State private var selectedAccountIndex: Int? = 0
+    @State var selectedAccountIndex: Int?
     @State private var showingDeleteAlert = false
     @State private var showingEditNameSheet = false
     @State private var showingEditIconSheet = false
@@ -30,7 +30,7 @@ struct MainPageView: View {
                 VStack {
                     ForEach(accounts.indices, id: \.self) { index in
                         let account = accounts[index]
-//                        let curIndex = index
+                        @Binding var Baccount = account
                         
                         HStack {
                             NavigationLink(destination: TransactionsView(account: account)) {
@@ -73,6 +73,14 @@ struct MainPageView: View {
                             }
                             .padding(.horizontal)
                         }
+                        .sheet(isPresented: $showingEditNameSheet) {
+                            EditAccountNameView(account: account)
+//                            TestView()
+                        }
+                        .sheet(isPresented: $showingEditIconSheet) {
+//                            EditAccountIconView(account: account)
+                            TestView()
+                        }
                         
                         Divider()
                     }
@@ -97,20 +105,6 @@ struct MainPageView: View {
                 }
                 
                 Spacer()
-            }
-            .sheet(isPresented: $showingEditNameSheet) {
-                if let index = selectedAccountIndex {
-//                    EditAccountNameView(account: $accounts[index])
-//                    EditAccountNameView(account: Account(name: "", description: ""))
-//                    EditAccountNameView()
-                    TestView()
-                }
-//                TestView()
-            }
-            .sheet(isPresented: $showingEditIconSheet) {
-                if let index = selectedAccountIndex {
-                    EditAccountIconView(account: $accounts[index])
-                }
             }
             .alert("Delete Account", isPresented: $showingDeleteAlert) {
                 Button("Delete", role: .destructive) {
