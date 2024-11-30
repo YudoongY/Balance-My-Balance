@@ -30,7 +30,6 @@ struct MainPageView: View {
                 VStack {
                     ForEach(accounts.indices, id: \.self) { index in
                         let account = accounts[index]
-                        @Binding var Baccount = account
                         
                         HStack {
                             NavigationLink(destination: TransactionsView(account: account)) {
@@ -38,7 +37,6 @@ struct MainPageView: View {
                                     Circle()
                                         .frame(width: 45, height: 45)
                                         .overlay(Text(account.icon).font(.title))
-                                    // Account avatar
                                     Text(account.name)
                                     
                                     Spacer()
@@ -74,12 +72,12 @@ struct MainPageView: View {
                             .padding(.horizontal)
                         }
                         .sheet(isPresented: $showingEditNameSheet) {
-                            EditAccountNameView(account: account)
+                            EditAccountNameView(account: $accounts[index])
 //                            TestView()
                         }
                         .sheet(isPresented: $showingEditIconSheet) {
-//                            EditAccountIconView(account: account)
-                            TestView()
+                            EditAccountIconView(account: $accounts[index])
+//                            TestView()
                         }
                         
                         Divider()
