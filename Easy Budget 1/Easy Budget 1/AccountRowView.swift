@@ -46,9 +46,11 @@ struct AccountRowView: View {
         }
         .sheet(isPresented: $showingEditNameSheet) {
             EditAccountNameView(account: $account) // Pass binding to the account
+            .presentationDetents([.height(250)])
         }
         .sheet(isPresented: $showingEditIconSheet) {
             EditAccountIconView(account: $account) // Pass binding to the account
+//            .presentationDetents([.height(250)])
         }
         .alert("Delete Account", isPresented: $showingDeleteAlert) {
             Button("Delete", role: .destructive) {
