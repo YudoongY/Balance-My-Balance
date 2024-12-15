@@ -78,30 +78,23 @@ struct ContentView: View {
                 
                 // 按日期分组并显示交易记录
                 List {
-//                    ForEach(groupTransactionsByDate()) { dateGroup in
-//                        HStack {
-//                            Spacer()
-//                            Text(dateGroup.date, style: .date)
-//                                .font(.caption)
-//                                .foregroundColor(.black)
-//                            Spacer()
-//                        }
-//                        .padding(.vertical, -20)
-//
-//                        // 显示交易记录
-//                        ForEach(dateGroup.transactions) { transaction in
-//                            ChatBubbleView(transaction: transaction)
-//                                .listRowInsets(EdgeInsets())
-//                                .listRowSeparator(.hidden) // 隐藏行间分隔符
-//                        }
-//                        .padding(.vertical, 0)
-//                    }
                     ForEach(groupTransactionsByDate(filteredTransactions)) { dateGroup in
-                        Section(header: Text(dateGroup.date, style: .date).font(.caption)) {
-                            ForEach(dateGroup.transactions) { transaction in
-                                ChatBubbleView(transaction: transaction)
-                            }
+                        HStack {
+                            Spacer()
+                            Text(dateGroup.date, style: .date)
+                                .font(.caption)
+                                .foregroundColor(.black)
+                            Spacer()
                         }
+                        .padding(.vertical, -20)
+
+                        // 显示交易记录
+                        ForEach(dateGroup.transactions) { transaction in
+                            ChatBubbleView(transaction: transaction)
+                                .listRowInsets(EdgeInsets())
+                                .listRowSeparator(.hidden) // 隐藏行间分隔符
+                        }
+                        .padding(.vertical, 0)
                     }
                 }
                 .listStyle(.plain)
@@ -162,6 +155,7 @@ struct ContentView: View {
                     selectedMonth: $selectedMonth,
                     selectedWeek: $selectedWeek
                 )
+                .presentationDetents([.height(400)])
             }
         }
     }
@@ -176,73 +170,5 @@ struct ContentView: View {
         let grouped = Dictionary(grouping: transactions) { $0.dateOnly }
         return grouped.map { TransactionDateGroup(date: $0.key, transactions: $0.value) }
             .sorted { $0.date > $1.date }
-    }
-}
-
-struct DatePickerModal: View {
-    @Binding var selectedYear: Int
-    @Binding var selectedMonth: Int?
-    @Binding var selectedWeek: Int?
-    @State private var pickerMode: String = "Year"
-
-    var body: some View {
-        VStack {
-            HStack {
-                ForEach(["Year", "Month", "Week"], id: \.self) { mode in
-                    Button(action: {
-                        pickerMode = mode
-                        if mode == "Year" {
-                            selectedMonth = nil
-                            selectedWeek = nil
-                        } else if mode == "Month" {
-                            selectedWeek = nil
-                        }
-                    }) {
-                        Text(mode)
-                            .padding()
-                            .background(pickerMode == mode ? Color.blue : Color.gray)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
-                    }
-                }
-            }
-            .padding()
-
-            if pickerMode == "Year" {
-                Picker("Year", selection: $selectedYear) {
-                    ForEach(2006...2042, id: \.self) { year in
-                        Text("\(year)").tag(year)
-                    }
-                }
-                .pickerStyle(WheelPickerStyle())
-            } else if pickerMode == "Month" {
-                HStack {
-                    Picker("Year", selection: $selectedYear) {
-                        ForEach(2006...2042, id: \.self) { year in
-                            Text("\(year)").tag(year)
-                        }
-                    }
-                    Picker("Month", selection: $selectedMonth) {
-                        ForEach(1...12, id: \.self) { month in
-                            Text("\(DateFormatter().monthSymbols[month - 1])").tag(month)
-                        }
-                    }
-                }
-                .pickerStyle(WheelPickerStyle())
-            } else if pickerMode == "Week" {
-                Picker("Year", selection: $selectedYear) {
-                    ForEach(2006...2042, id: \.self) { year in
-                        Text("\(year)").tag(year)
-                    }
-                }
-                Picker("Week", selection: $selectedWeek) {
-                    ForEach(1...52, id: \.self) { week in
-                        Text("Week \(week)").tag(week)
-                    }
-                }
-                .pickerStyle(WheelPickerStyle())
-            }
-        }
-        .padding()
     }
 }
