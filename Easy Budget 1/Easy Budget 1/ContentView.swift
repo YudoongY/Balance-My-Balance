@@ -41,38 +41,8 @@ struct ContentView: View {
                 transactionListView()
                 
                 Spacer()
-                    
-                // 底部按钮，用于添加收入和支出
-                HStack {
-                    Button(action: {
-                        showingIncomeSheet = true
-                    }) {
-                        Text("Add Income")
-                            .font(.headline)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.green.opacity(0.7))
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
-                    }
-                    
-                    Spacer()
-                    
-                    Button(action: {
-                        showingExpenseSheet = true
-                    }) {
-                        Text("Add Expense")
-                            .font(.headline)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.red.opacity(0.7))
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
-                    }
-                }
-                .padding(.horizontal)
-                .padding(.bottom, 10)
                 
+                bottomButtons()
             }
             .sheet(isPresented: $showingIncomeSheet) {
                 VStack{
@@ -108,12 +78,6 @@ struct ContentView: View {
                 .presentationDetents([.height(400)])
             }
         }
-    }
-    
-    private func groupTransactionsByDate(_ transactions: [Transaction]) -> [TransactionDateGroup] {
-        let grouped = Dictionary(grouping: transactions) { $0.dateOnly }
-        return grouped.map { TransactionDateGroup(date: $0.key, transactions: $0.value) }
-            .sorted { $0.date > $1.date }
     }
 }
 
@@ -153,13 +117,13 @@ extension ContentView {
                 Button(action: {
                     showingBudgetSheet = true // 打开预算编辑表单
                 }) {
-                    let monthString: String = {
-                        if let month = selectedMonth {
-                            return " \(DateFormatter().monthSymbols[month - 1])"
-                        } else {
-                            return ""
-                        }
-                    }()
+//                    let monthString: String = {
+//                        if let month = selectedMonth {
+//                            return " \(DateFormatter().monthSymbols[month - 1])"
+//                        } else {
+//                            return ""
+//                        }
+//                    }()
 
                     let currentLeft: String = {
                         guard let month = selectedMonth, (1...12).contains(month) else {
@@ -170,9 +134,8 @@ extension ContentView {
                         return String(format: "%.2f", remaining)
                     }()
 
-                    Text("Current \(selectedYear)\(monthString) left $\(currentLeft)")
+                    Text("Current month left $\(currentLeft)")
                         .font(.headline)
-
                 }
             }
             .padding()
@@ -232,5 +195,11 @@ extension ContentView {
         }
         .padding(.horizontal)
         .padding(.bottom, 10)
+    }
+    
+    private func groupTransactionsByDate(_ transactions: [Transaction]) -> [TransactionDateGroup] {
+        let grouped = Dictionary(grouping: transactions) { $0.dateOnly }
+        return grouped.map { TransactionDateGroup(date: $0.key, transactions: $0.value) }
+            .sorted { $0.date > $1.date }
     }
 }
