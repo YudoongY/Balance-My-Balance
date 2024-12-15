@@ -36,11 +36,13 @@ class Account: Identifiable, ObservableObject{
     @Published var name: String
     @Published var description: String
     @Published var transactions: [Transaction] = []
+    @Published var balance: Double
     
     init(name: String, description: String) {
         self.name = name
         self.description = description
         self.transactions = []
         self.icon = "💳"
+        self.balance = 100
     }
 }
