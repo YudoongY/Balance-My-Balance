@@ -34,15 +34,13 @@ class Account: Identifiable, ObservableObject{
     let id = UUID()
     @Published var icon: String
     @Published var name: String
-    @Published var description: String
     @Published var transactions: [Transaction] = []
     @Published var yearlyBudget: Double = 0.0
     @Published var monthlyBudget: [Int: Double] = [:]
     @Published var weeklyBudget: [Int: Double] = [:]
     
-    init(name: String, description: String) {
+    init(name: String) {
         self.name = name
-        self.description = description
         self.transactions = []
         self.icon = "💳"
     }

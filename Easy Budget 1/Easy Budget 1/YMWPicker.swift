@@ -28,7 +28,7 @@ struct DatePickerModal: View {
 
     var body: some View {
         VStack(spacing: 20) {
-            // 模式选择按钮
+            // Mode picker button
             HStack {
                 ForEach(["Year", "Month", "Week"], id: \.self) { mode in
                     Button(action: {
@@ -51,7 +51,7 @@ struct DatePickerModal: View {
             }
             .padding(.horizontal)
 
-            // 滚轮选择器
+            // Wheel picker
             if pickerMode == "Year" {
                 Picker("Year", selection: $tempYear) {
                     ForEach(2006...2042, id: \.self) { year in
@@ -74,19 +74,44 @@ struct DatePickerModal: View {
                 }
                 .pickerStyle(WheelPickerStyle())
             } else if pickerMode == "Week" {
+                let currentDate = Date()
+                let calendar = Calendar.current
+                
+                // 当前周和当前年
+                let currentWeek = calendar.component(.weekOfYear, from: currentDate)
+                let currentYear = calendar.component(.year, from: currentDate)
+                
+                // 获取当前年总周数
+                let maxWeeks = calendar.range(of: .weekOfYear, in: .yearForWeekOfYear, for: currentDate)?.count ?? 52
+
+                // 计算上周：若当前周为 1，回退到前一年最后一周
+                let lastWeek = currentWeek > 1 ? currentWeek - 1 : maxWeeks
+
+                let weeks = [
+                    (label: "Last Week", value: lastWeek),
+                    (label: "Current Week", value: currentWeek)
+                ]
+                
                 HStack {
                     Picker("Year", selection: $tempYear) {
-                        ForEach(2006...2042, id: \.self) { year in
+                        ForEach((currentYear-18)...(currentYear+18), id: \.self) { year in
                             Text("\(year)").tag(year)
                         }
                     }
+
                     Picker("Week", selection: $tempWeek) {
-                        ForEach(1...52, id: \.self) { week in
-                            Text("Week \(week)").tag(week)
+                        ForEach(weeks, id: \.value) { week in
+                            Text(week.label).tag(week.value)
                         }
                     }
                 }
                 .pickerStyle(WheelPickerStyle())
+                .onAppear{
+                    if tempWeek == nil {
+                        tempWeek = currentWeek
+                        tempYear = currentYear
+                    }
+                }
             }
 
             // 操作按钮

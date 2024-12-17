@@ -4,7 +4,7 @@ import SwiftUI
 struct Easy_Budget_1App: App {
     var body: some Scene {
         WindowGroup {
-            MainPageView(accounts: [Account(name: "Account1", description: "")])
+            MainPageView(accounts: [Account(name: "Account1")])
         }
     }
 }

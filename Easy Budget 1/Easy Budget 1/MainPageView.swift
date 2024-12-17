@@ -32,7 +32,7 @@ struct MainPageView: View {
                     HStack {
                         Spacer()
                         Button(action: {
-                            let newAccount = Account(name: "Account \(accounts.count + 1)", description: "")
+                            let newAccount = Account(name: "Account \(accounts.count + 1)")
                             accounts.append(newAccount) // Add new account
                         }) {
                             HStack {

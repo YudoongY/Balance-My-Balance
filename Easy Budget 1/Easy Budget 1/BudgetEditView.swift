@@ -28,6 +28,7 @@ struct BudgetEditView: View {
             TextField("Enter new budget amount", value: $tempBudgetAmount, format: .number)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .keyboardType(.decimalPad)
+                .padding(.horizontal)
 
             HStack {
                 Button("Cancel") {

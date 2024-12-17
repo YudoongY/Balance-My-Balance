@@ -19,6 +19,19 @@ struct ContentView: View {
     var expenseAmount: Double {
         account.transactions.filter { !$0.isIncome }.map { $0.amount }.reduce(0, +)
     }
+    var filteredIncomeAmount: Double {
+        filteredTransactions
+            .filter { $0.isIncome }
+            .map { $0.amount }
+            .reduce(0, +)
+    }
+    var filteredExpenseAmount: Double {
+        filteredTransactions
+            .filter { !$0.isIncome }
+            .map { $0.amount }
+            .reduce(0, +)
+    }
+
     
     var filteredTransactions: [Transaction] {
         account.transactions.filter { transaction in
@@ -35,72 +48,70 @@ struct ContentView: View {
     }
     
     var body: some View {
-        NavigationView {
-            VStack {
-                headerView()
-                Divider()
-                
-                transactionListView()
-                
-                Spacer()
-                
-                bottomButtons()
-            }
-            .sheet(isPresented: $showingIncomeSheet) {
-                VStack{
-                    AddIncomeView { newTransaction in
-                        account.transactions.append(newTransaction)
-                    }
-                    .presentationDetents([.height(250)]) // Adjust the size of the window
+        VStack {
+            headerView()
+            Divider()
+            
+            transactionListView()
+            
+            Spacer()
+            
+            bottomButtons()
+        }
+        .sheet(isPresented: $showingIncomeSheet) {
+            VStack{
+                AddIncomeView { newTransaction in
+                    account.transactions.append(newTransaction)
                 }
+                .presentationDetents([.height(250)]) // Adjust the size of the window
             }
-            .sheet(isPresented: $showingExpenseSheet) {
-                VStack{
-                    AddExpenseView { newTransaction in
-                        account.transactions.append(newTransaction)
-                    }
-                    .presentationDetents([.height(250)]) // Adjust the size of the window
+        }
+        .sheet(isPresented: $showingExpenseSheet) {
+            VStack{
+                AddExpenseView { newTransaction in
+                    account.transactions.append(newTransaction)
                 }
+                .presentationDetents([.height(250)]) // Adjust the size of the window
             }
-            .sheet(isPresented: $showingDatePicker) {
-                DatePickerModal(
-                    selectedYear: $selectedYear,
-                    selectedMonth: $selectedMonth,
-                    selectedWeek: $selectedWeek,
-                    onDone: { year, month, week in
-                        selectedYear = year
-                        selectedMonth = month
-                        selectedWeek = week
-                        showingDatePicker = false // 关闭选择器
-                    },
-                    onCancel: {
-                        showingDatePicker = false // 关闭选择器
+        }
+        .sheet(isPresented: $showingDatePicker) {
+            DatePickerModal(
+                selectedYear: $selectedYear,
+                selectedMonth: $selectedMonth,
+                selectedWeek: $selectedWeek,
+                onDone: { year, month, week in
+                    selectedYear = year
+                    selectedMonth = month
+                    selectedWeek = week
+                    showingDatePicker = false // 关闭选择器
+                },
+                onCancel: {
+                    showingDatePicker = false // 关闭选择器
+                }
+            )
+            .presentationDetents([.height(400)])
+        }
+        .sheet(isPresented: $showingBudgetSheet) {
+            BudgetEditView(
+                account: account,
+                selectedYear: $selectedYear,
+                selectedMonth: $selectedMonth,
+                selectedWeek: $selectedWeek,
+                onSave: { newBudget in
+                    if let week = selectedWeek {
+                        account.weeklyBudget[week] = newBudget
+                    } else if let month = selectedMonth {
+                        account.monthlyBudget[month] = newBudget
+                    } else {
+                        account.yearlyBudget = newBudget
                     }
-                )
-                .presentationDetents([.height(400)])
-            }
-            .sheet(isPresented: $showingBudgetSheet) {
-                BudgetEditView(
-                    account: account,
-                    selectedYear: $selectedYear,
-                    selectedMonth: $selectedMonth,
-                    selectedWeek: $selectedWeek,
-                    onSave: { newBudget in
-                        if let week = selectedWeek {
-                            account.weeklyBudget[week] = newBudget
-                        } else if let month = selectedMonth {
-                            account.monthlyBudget[month] = newBudget
-                        } else {
-                            account.yearlyBudget = newBudget
-                        }
-                        showingBudgetSheet = false // 关闭表单
-                    },
-                    onCancel: {
-                        showingBudgetSheet = false // 放弃修改，关闭表单
-                    }
-                )
-                .presentationDetents([.height(400)])
-            }
+                    showingBudgetSheet = false // 关闭表单
+                },
+                onCancel: {
+                    showingBudgetSheet = false // 放弃修改，关闭表单
+                }
+            )
+            .presentationDetents([.height(250)])
         }
     }
 }
@@ -124,7 +135,7 @@ extension ContentView {
                     Text("Expense")
                         .font(.caption) // 更小的字体
                         .foregroundColor(.gray)
-                    Text(String(format: "$ %.2f", expenseAmount))
+                    Text(String(format: "$ %.2f", filteredExpenseAmount))
                         .font(.bold(.title)())
                         .multilineTextAlignment(.center)
                 }
@@ -150,7 +161,7 @@ extension ContentView {
                             return "N/A"
                         }
                         let budget = account.monthlyBudget[month] ?? 0.0
-                        let remaining = budget - expenseAmount
+                        let remaining = budget - filteredExpenseAmount
                         return String(format: "%.2f", remaining)
                     }()
 
