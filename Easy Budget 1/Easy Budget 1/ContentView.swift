@@ -12,14 +12,15 @@ struct ContentView: View {
     @State private var selectedYear = Calendar.current.component(.year, from: Date())
     @State private var selectedMonth: Int? = Calendar.current.component(.month, from: Date())
     @State private var selectedWeek: Int? = nil // Initially no week selected
+    @State private var selectedDisplayType: String = "Balance" // 当前选择的显示类型
 
-    var incomeAmount: Double {
+    var totalIncome: Double {
         account.transactions.filter { $0.isIncome }.map { $0.amount }.reduce(0, +)
     }
-    var expenseAmount: Double {
+    var totalExpense: Double {
         account.transactions.filter { !$0.isIncome }.map { $0.amount }.reduce(0, +)
     }
-    var filteredExpenseAmount: Double {
+    var filteredExpense: Double {
         let filtered = account.transactions.filter { transaction in
             if let week = selectedWeek {
                 return Calendar.current.component(.weekOfYear, from: transaction.timestamp) == week &&
@@ -33,6 +34,33 @@ struct ContentView: View {
         }
         return filtered.filter { !$0.isIncome }.map { $0.amount }.reduce(0, +)
     }
+    var filteredIncome: Double {
+        let filtered = account.transactions.filter { transaction in
+            if let week = selectedWeek {
+                return Calendar.current.component(.weekOfYear, from: transaction.timestamp) == week &&
+                       Calendar.current.component(.year, from: transaction.timestamp) == selectedYear
+            }
+            if let month = selectedMonth {
+                return Calendar.current.component(.month, from: transaction.timestamp) == month &&
+                       Calendar.current.component(.year, from: transaction.timestamp) == selectedYear
+            }
+            return Calendar.current.component(.year, from: transaction.timestamp) == selectedYear
+        }
+        return filtered.filter { $0.isIncome }.map { $0.amount }.reduce(0, +)
+    }
+    var displayedValue: String {
+        switch selectedDisplayType {
+        case "Balance":
+            return String(format: "$ %.2f", totalIncome - totalExpense)
+        case "Expense":
+            return String(format: "$ %.2f", filteredExpense)
+        case "Income":
+            return String(format: "$ %.2f", filteredIncome)
+        default:
+            return "$ 0.00"
+        }
+    }
+
     
     var filteredTransactions: [Transaction] {
         account.transactions.filter { transaction in
@@ -132,13 +160,26 @@ extension ContentView {
                 
                 Spacer()
                 
-                VStack {
-                    Text("Expense")
-                        .font(.caption) // 更小的字体
-                        .foregroundColor(.gray)
-                    Text(String(format: "$ %.2f", filteredExpenseAmount))
+                HStack {
+                    Menu {
+                        Button("Balance") {
+                            selectedDisplayType = "Balance"
+                        }
+                        Button("Expense") {
+                            selectedDisplayType = "Expense"
+                        }
+                        Button("Income") {
+                            selectedDisplayType = "Income"
+                        }
+                    } label: {
+                        Text(selectedDisplayType)
+                            .font(.body)
+                            .foregroundColor(.blue)
+                            .underline() // 添加下划线表示可点击
+                    }
+                    
+                    Text(displayedValue)
                         .font(.bold(.title)())
-                        .multilineTextAlignment(.center)
                 }
             }
             .padding(.horizontal)
@@ -170,15 +211,15 @@ extension ContentView {
                     let currentLeft: String = {
                         if selectedWeek != nil {
                             let budget = account.weeklyBudget[selectedWeek!] ?? 0.0
-                            let remaining = budget - filteredExpenseAmount
+                            let remaining = budget - filteredExpense
                             return String(format: "%.2f", remaining)
                         } else if let month = selectedMonth {
                             let budget = account.monthlyBudget[month] ?? 0.0
-                            let remaining = budget - filteredExpenseAmount
+                            let remaining = budget - filteredExpense
                             return String(format: "%.2f", remaining)
                         } else {
                             let budget = account.yearlyBudget[selectedYear] ?? 0.0
-                            let remaining = budget - filteredExpenseAmount
+                            let remaining = budget - filteredExpense
                             return String(format: "%.2f", remaining)
                         }
                     }()
