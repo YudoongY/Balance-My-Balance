@@ -19,19 +19,20 @@ struct ContentView: View {
     var expenseAmount: Double {
         account.transactions.filter { !$0.isIncome }.map { $0.amount }.reduce(0, +)
     }
-    var filteredIncomeAmount: Double {
-        filteredTransactions
-            .filter { $0.isIncome }
-            .map { $0.amount }
-            .reduce(0, +)
-    }
     var filteredExpenseAmount: Double {
-        filteredTransactions
-            .filter { !$0.isIncome }
-            .map { $0.amount }
-            .reduce(0, +)
+        let filtered = account.transactions.filter { transaction in
+            if let week = selectedWeek {
+                return Calendar.current.component(.weekOfYear, from: transaction.timestamp) == week &&
+                       Calendar.current.component(.year, from: transaction.timestamp) == selectedYear
+            }
+            if let month = selectedMonth {
+                return Calendar.current.component(.month, from: transaction.timestamp) == month &&
+                       Calendar.current.component(.year, from: transaction.timestamp) == selectedYear
+            }
+            return Calendar.current.component(.year, from: transaction.timestamp) == selectedYear
+        }
+        return filtered.filter { !$0.isIncome }.map { $0.amount }.reduce(0, +)
     }
-
     
     var filteredTransactions: [Transaction] {
         account.transactions.filter { transaction in
@@ -103,7 +104,7 @@ struct ContentView: View {
                     } else if let month = selectedMonth {
                         account.monthlyBudget[month] = newBudget
                     } else {
-                        account.yearlyBudget = newBudget
+                        account.yearlyBudget[selectedYear] = newBudget
                     }
                     showingBudgetSheet = false // 关闭表单
                 },
@@ -145,27 +146,46 @@ extension ContentView {
             
             HStack {
                 Button(action: {
-                    showingDatePicker = true
-                }) {
-                    Text("\(selectedYear)\(selectedMonth == nil ? "" : " \(DateFormatter().monthSymbols[selectedMonth! - 1])")")
-                        .font(.headline)
-                }
+                        showingDatePicker = true
+                    }) {
+                        let displayDate: String = {
+                            if selectedWeek != nil {
+//                                return "\(selectedYear) Week \(selectedWeek!)"
+                                return "Current week"
+                            } else if let month = selectedMonth {
+                                return "\(selectedYear) \(DateFormatter().monthSymbols[month - 1])"
+                            } else {
+                                return "\(selectedYear)"
+                            }
+                        }()
+                        Text(displayDate)
+                            .font(.headline)
+                    }
                 
                 Spacer()
                 
                 Button(action: {
-                    showingBudgetSheet = true // 打开预算编辑表单
+                        showingBudgetSheet = true
                 }) {
                     let currentLeft: String = {
-                        guard let month = selectedMonth, (1...12).contains(month) else {
-                            return "N/A"
+                        if selectedWeek != nil {
+                            let budget = account.weeklyBudget[selectedWeek!] ?? 0.0
+                            let remaining = budget - filteredExpenseAmount
+                            return String(format: "%.2f", remaining)
+                        } else if let month = selectedMonth {
+                            let budget = account.monthlyBudget[month] ?? 0.0
+                            let remaining = budget - filteredExpenseAmount
+                            return String(format: "%.2f", remaining)
+                        } else {
+                            let budget = account.yearlyBudget[selectedYear] ?? 0.0
+                            let remaining = budget - filteredExpenseAmount
+                            return String(format: "%.2f", remaining)
                         }
-                        let budget = account.monthlyBudget[month] ?? 0.0
-                        let remaining = budget - filteredExpenseAmount
-                        return String(format: "%.2f", remaining)
                     }()
-
-                    Text("Current month left $\(currentLeft)")
+                    
+                    let label = selectedWeek != nil ? "Current week left" : selectedMonth != nil ? "Current month left" : "Current year left"
+                    
+                    Text("\(label) $\(currentLeft)")
                         .font(.headline)
                 }
             }

@@ -8,7 +8,7 @@ struct BudgetEditView: View {
     @Binding var selectedMonth: Int?
     @Binding var selectedWeek: Int?
 
-    @State private var tempBudgetAmount: Double = 0.0
+    @State private var tempBudgetAmount: Double? = nil
     var onSave: (Double) -> Void
     var onCancel: () -> Void
 
@@ -29,6 +29,15 @@ struct BudgetEditView: View {
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .keyboardType(.decimalPad)
                 .padding(.horizontal)
+                .onAppear {
+                    if let week = selectedWeek, let budget = account.weeklyBudget[week] {
+                        tempBudgetAmount = budget
+                    } else if let month = selectedMonth, let budget = account.monthlyBudget[month] {
+                        tempBudgetAmount = budget
+                    } else if let budget = account.yearlyBudget[selectedYear] {
+                        tempBudgetAmount = budget
+                    }
+                }
 
             HStack {
                 Button("Cancel") {
@@ -40,7 +49,8 @@ struct BudgetEditView: View {
                 .cornerRadius(8)
                 
                 Button("Save") {
-                    onSave(tempBudgetAmount)
+                    let finalBudget = tempBudgetAmount ?? 0.0 // 如果用户未输入，则默认保存为 0
+                    onSave(finalBudget)
                 }
                 .padding()
                 .background(Color.blue.opacity(0.7))
@@ -49,6 +59,7 @@ struct BudgetEditView: View {
             }
         }
         .padding()
+        
     }
 
     private func calculateWeeksInMonth(year: Int, month: Int) -> [Int] {

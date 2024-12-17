@@ -35,7 +35,7 @@ class Account: Identifiable, ObservableObject{
     @Published var icon: String
     @Published var name: String
     @Published var transactions: [Transaction] = []
-    @Published var yearlyBudget: Double = 0.0
+    @Published var yearlyBudget: [Int: Double] = [:]
     @Published var monthlyBudget: [Int: Double] = [:]
     @Published var weeklyBudget: [Int: Double] = [:]
     
