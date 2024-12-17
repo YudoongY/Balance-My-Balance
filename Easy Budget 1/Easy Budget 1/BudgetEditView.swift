@@ -1,9 +1,4 @@
-//
-//  BudgetEditView.swift
-//  Easy Budget 1
-//
-//  Created by 高铭阳 on 12/14/24.
-//
+// Edit Monthly/Weekly/Yearly Budget here
 
 import SwiftUI
 
@@ -13,7 +8,9 @@ struct BudgetEditView: View {
     @Binding var selectedMonth: Int?
     @Binding var selectedWeek: Int?
 
-    @State private var budgetAmount: Double = 0.0
+    @State private var tempBudgetAmount: Double = 0.0
+    var onSave: (Double) -> Void
+    var onCancel: () -> Void
 
     var body: some View {
         VStack(spacing: 20) {
@@ -28,48 +25,29 @@ struct BudgetEditView: View {
                 Text("Editing Yearly Budget for \(selectedYear)")
             }
             
-            TextField("Enter new budget amount", value: $budgetAmount, format: .number)
+            TextField("Enter new budget amount", value: $tempBudgetAmount, format: .number)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .keyboardType(.decimalPad)
 
-            Button("Save") {
-                saveBudget()
+            HStack {
+                Button("Cancel") {
+                    onCancel()
+                }
+                .padding()
+                .background(Color.gray.opacity(0.7))
+                .foregroundColor(.white)
+                .cornerRadius(8)
+                
+                Button("Save") {
+                    onSave(tempBudgetAmount)
+                }
+                .padding()
+                .background(Color.blue.opacity(0.7))
+                .foregroundColor(.white)
+                .cornerRadius(8)
             }
-            .padding()
-            .background(Color.blue)
-            .foregroundColor(.white)
-            .cornerRadius(8)
         }
         .padding()
-    }
-
-    private func saveBudget() {
-        if selectedWeek != nil {
-            account.weeklyBudget[selectedWeek!] = budgetAmount
-        } else if selectedMonth != nil {
-            account.monthlyBudget[selectedMonth!] = budgetAmount
-            updateWeeklyBudgetsForMonth()
-        } else {
-            account.yearlyBudget = budgetAmount
-            updateMonthlyBudgets()
-        }
-    }
-
-    private func updateWeeklyBudgetsForMonth() {
-        guard let month = selectedMonth else { return }
-        let weeks = calculateWeeksInMonth(year: selectedYear, month: month)
-        let weeklyBudget = budgetAmount / Double(weeks.count)
-        for week in weeks {
-            account.weeklyBudget[week] = weeklyBudget
-        }
-    }
-
-    private func updateMonthlyBudgets() {
-        let monthlyBudget = budgetAmount / 12
-        for month in 1...12 {
-            account.monthlyBudget[month] = monthlyBudget
-            updateWeeklyBudgetsForMonth()
-        }
     }
 
     private func calculateWeeksInMonth(year: Int, month: Int) -> [Int] {

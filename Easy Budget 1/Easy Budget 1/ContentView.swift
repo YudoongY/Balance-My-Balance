@@ -13,9 +13,11 @@ struct ContentView: View {
     @State private var selectedMonth: Int? = Calendar.current.component(.month, from: Date())
     @State private var selectedWeek: Int? = nil // Initially no week selected
 
-    var amount: Double {
+    var incomeAmount: Double {
         account.transactions.filter { $0.isIncome }.map { $0.amount }.reduce(0, +)
-        - account.transactions.filter { !$0.isIncome }.map { $0.amount }.reduce(0, +)
+    }
+    var expenseAmount: Double {
+        account.transactions.filter { !$0.isIncome }.map { $0.amount }.reduce(0, +)
     }
     
     var filteredTransactions: [Transaction] {
@@ -64,7 +66,16 @@ struct ContentView: View {
                 DatePickerModal(
                     selectedYear: $selectedYear,
                     selectedMonth: $selectedMonth,
-                    selectedWeek: $selectedWeek
+                    selectedWeek: $selectedWeek,
+                    onDone: { year, month, week in
+                        selectedYear = year
+                        selectedMonth = month
+                        selectedWeek = week
+                        showingDatePicker = false // 关闭选择器
+                    },
+                    onCancel: {
+                        showingDatePicker = false // 关闭选择器
+                    }
                 )
                 .presentationDetents([.height(400)])
             }
@@ -73,7 +84,20 @@ struct ContentView: View {
                     account: account,
                     selectedYear: $selectedYear,
                     selectedMonth: $selectedMonth,
-                    selectedWeek: $selectedWeek
+                    selectedWeek: $selectedWeek,
+                    onSave: { newBudget in
+                        if let week = selectedWeek {
+                            account.weeklyBudget[week] = newBudget
+                        } else if let month = selectedMonth {
+                            account.monthlyBudget[month] = newBudget
+                        } else {
+                            account.yearlyBudget = newBudget
+                        }
+                        showingBudgetSheet = false // 关闭表单
+                    },
+                    onCancel: {
+                        showingBudgetSheet = false // 放弃修改，关闭表单
+                    }
                 )
                 .presentationDetents([.height(400)])
             }
@@ -97,12 +121,16 @@ extension ContentView {
                 Spacer()
                 
                 VStack {
-                    // Account amount
-                    Text(String(format: "$ %.2f", amount))
+                    Text("Expense")
+                        .font(.caption) // 更小的字体
+                        .foregroundColor(.gray)
+                    Text(String(format: "$ %.2f", expenseAmount))
                         .font(.bold(.title)())
+                        .multilineTextAlignment(.center)
                 }
             }
-            .padding()
+            .padding(.horizontal)
+            .padding(.vertical, 7)
             
             HStack {
                 Button(action: {
@@ -117,20 +145,12 @@ extension ContentView {
                 Button(action: {
                     showingBudgetSheet = true // 打开预算编辑表单
                 }) {
-//                    let monthString: String = {
-//                        if let month = selectedMonth {
-//                            return " \(DateFormatter().monthSymbols[month - 1])"
-//                        } else {
-//                            return ""
-//                        }
-//                    }()
-
                     let currentLeft: String = {
                         guard let month = selectedMonth, (1...12).contains(month) else {
                             return "N/A"
                         }
                         let budget = account.monthlyBudget[month] ?? 0.0
-                        let remaining = budget + amount
+                        let remaining = budget - expenseAmount
                         return String(format: "%.2f", remaining)
                     }()
 
@@ -138,7 +158,7 @@ extension ContentView {
                         .font(.headline)
                 }
             }
-            .padding()
+            .padding(.horizontal)
         }
     }
     
