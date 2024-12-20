@@ -10,7 +10,7 @@ struct DatePickerModal: View {
     @State private var tempYear: Int
     @State private var tempMonth: Int?
     @State private var tempWeek: Int?
-    @State private var pickerMode: String = "Year" // 控制当前的滚轮模式
+    @State private var pickerMode: String = "Month" // 控制当前的滚轮模式
 
     var onDone: (Int, Int?, Int?) -> Void
     var onCancel: () -> Void
@@ -85,9 +85,6 @@ struct DatePickerModal: View {
                 let currentWeek = calendar.component(.weekOfYear, from: currentDate)
                 let currentYear = calendar.component(.year, from: currentDate)
                 
-                // 获取当前年总周数
-                let maxWeeks = calendar.range(of: .weekOfYear, in: .yearForWeekOfYear, for: currentDate)?.count ?? 52
-
                 // 计算上周：若当前周为 1，回退到前一年最后一周
                 let lastWeek = currentWeek > 1 ? currentWeek - 1 : maxWeeks
 

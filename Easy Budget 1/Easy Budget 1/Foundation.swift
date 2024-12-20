@@ -38,6 +38,10 @@ class Account: Identifiable, ObservableObject{
     @Published var yearlyBudget: [Int: Double] = [:]
     @Published var monthlyBudget: [Int: Double] = [:]
     @Published var weeklyBudget: [Int: Double] = [:]
+    @Published var selectedYear: Int = Calendar.current.component(.year, from: Date())
+    @Published var selectedMonth: Int? = Calendar.current.component(.month, from: Date())
+    @Published var selectedWeek: Int? = Calendar.current.component(.weekOfYear, from: Date())
+    @Published var selectedDisplayType: String = "Balance"
     
     init(name: String) {
         self.name = name

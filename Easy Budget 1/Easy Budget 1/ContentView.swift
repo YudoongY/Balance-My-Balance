@@ -12,7 +12,7 @@ struct ContentView: View {
     @State private var selectedYear = Calendar.current.component(.year, from: Date())
     @State private var selectedMonth: Int? = Calendar.current.component(.month, from: Date())
     @State private var selectedWeek: Int? = nil // Initially no week selected
-    @State private var selectedDisplayType: String = "Balance" // 当前选择的显示类型
+    // @State private var selectedDisplayType: String = "Balance" // 当前选择的显示类型
 
     var totalIncome: Double {
         account.transactions.filter { $0.isIncome }.map { $0.amount }.reduce(0, +)
@@ -49,7 +49,7 @@ struct ContentView: View {
         return filtered.filter { $0.isIncome }.map { $0.amount }.reduce(0, +)
     }
     var displayedValue: String {
-        switch selectedDisplayType {
+        switch account.selectedDisplayType {
         case "Balance":
             return String(format: "$ %.2f", totalIncome - totalExpense)
         case "Expense":
@@ -163,19 +163,19 @@ extension ContentView {
                 HStack {
                     Menu {
                         Button("Balance") {
-                            selectedDisplayType = "Balance"
+                            account.selectedDisplayType = "Balance"
                         }
                         Button("Expense") {
-                            selectedDisplayType = "Expense"
+                            account.selectedDisplayType = "Expense"
                         }
                         Button("Income") {
-                            selectedDisplayType = "Income"
+                            account.selectedDisplayType = "Income"
                         }
                     } label: {
-                        Text(selectedDisplayType)
+                        Text(account.selectedDisplayType)
                             .font(.body)
                             .foregroundColor(.blue)
-                            .underline() // 添加下划线表示可点击
+                            // .underline() // 添加下划线表示可点击?
                     }
                     
                     Text(displayedValue)
