@@ -55,7 +55,9 @@ struct DatePickerModal: View {
             if pickerMode == "Year" {
                 Picker("Year", selection: $tempYear) {
                     ForEach(2006...2042, id: \.self) { year in
-                        Text("\(year)").tag(year)
+                        let formatter = NumberFormatter()
+                        formatter.numberStyle = .none
+                        Text(formatter.string(from: NSNumber(value: year)) ?? "\(year)").tag(year)
                     }
                 }
                 .pickerStyle(WheelPickerStyle())
@@ -63,7 +65,9 @@ struct DatePickerModal: View {
                 HStack {
                     Picker("Year", selection: $tempYear) {
                         ForEach(2006...2042, id: \.self) { year in
-                            Text("\(year)").tag(year)
+                            let formatter = NumberFormatter()
+                            formatter.numberStyle = .none
+                            Text(formatter.string(from: NSNumber(value: year)) ?? "\(year)").tag(year)
                         }
                     }
                     Picker("Month", selection: $tempMonth) {
